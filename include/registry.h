@@ -1,17 +1,18 @@
 #pragma once
 #include <iostream>
-#include <string>
+#include <string_view>
 #include <memory>
 #include "client.h"
 #include "rulebase.h"
 namespace kubesys{
     class Registry {
     public:
-        Registry(std::shared_ptr<RuleBase>ruleBase): ruleBase(ruleBase) {}
+        Registry(std::shared_ptr<RuleBase>ruleBase): ruleBase_(ruleBase) {}
         ~Registry() {
             // ruleBase.reset(); // Release RuleBase object
         }
         auto Learning(CURL *curl,std::string &url) -> void;
-        std::shared_ptr<RuleBase> ruleBase;
+        auto Register(CURL *curl,std::string &url) -> void;
+        std::shared_ptr<RuleBase> ruleBase_;
     };
 }

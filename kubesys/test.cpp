@@ -1,8 +1,9 @@
 #include <curl/curl.h>
 #include <iostream>
 #include <string>
-#include "../deps/include/sonic/sonic.h"
-
+#include <nlohmann/json.hpp>
+// #include "../deps/include/sonic/sonic.h"
+using json = nlohmann::json;
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* responseData) ;
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* responseData) {
     size_t totalSize = size * nmemb;
@@ -30,6 +31,7 @@ void test_curl() {
 
 }
 
+/*
 // g++ -I../deps/include/ -march=haswell --std=c++11 test.cpp -o test_sonic -lcurl
 void test_sonic(){
   std::string json = R"(
@@ -47,6 +49,7 @@ void test_sonic(){
   std::cout << wb.ToString() << std::endl;
 
 }
+*/
 
 // 示例 getFullKind 函数
 std::string getFullKind(const std::string& shortKind, const std::string& apiVersion) {
@@ -56,49 +59,57 @@ std::string getFullKind(const std::string& shortKind, const std::string& apiVers
     return apiVersion + "/" + shortKind;
 }
 
-void test_sonic2(){
-
-    std::string resourceStringValues = R"(
+void test_json(){
+  // JSON字符串
+    std::string jsonString = R"(
         {
-          "groupVersion": "v1",
-          "resources": [
-            {
-              "kind": "Pod",
-              "apiVersion": "v1"
-            },
-            {
-              "kind": "Service",
-              "apiVersion": "v1"
-            }
-          ]
+            "name": "John",
+            "age": 30,
+            "is_student": true,
+            "hobbies": ["reading", "swimming", "gaming"]
         }
     )";
+    try {
+        // 解析JSON数据
+        json jsonData = json::parse(jsonString);
 
-    // 解析 JSON 数据
-    sonic_json::Document doc;
-    doc.Parse(resourceStringValues);
+        // 获取JSON数据
+        std::string name = jsonData["name"];
+        int age = jsonData["age"];
+        bool isStudent = jsonData["is_student"];
 
-    // 获取 groupVersion 值
-    std::string apiVersion = doc["groupVersion"].GetString();
+        // 获取数组数据
+        // std::vector<std::string>
+        auto hobbies = jsonData["hobbies"];
 
-    std::cout << "----" << std::endl;
-    std::cout << doc["resources"].GetString() << std::endl;  // 打印原始 JSON 数据
-    std::cout << "----" << std::endl;
-    /*
-    for (const auto& w : doc["resources"].GetArray()) {
-        const auto& resourceValue = w.GetObject();
-        std::string shortKind = resourceValue["kind"].GetString();
-        std::string fullKind = getFullKind(shortKind, apiVersion);
-        std::cout << "Full Kind: " << fullKind << std::endl;
-    }*/
-    
+        // 输出JSON数据
+        std::cout << "Name: " << name << std::endl;
+        std::cout << "Age: " << age << std::endl;
+        std::cout << "Is Student: " << std::boolalpha << isStudent << std::endl;
 
+        std::cout << "Hobbies:" << std::endl;
+        for (const auto& hobby : hobbies) {
+            std::cout << "- " << hobby << std::endl;
+        }
+
+        // 将解析后的JSON数据再转换为字符串
+        std::string parsedJsonString = jsonData.dump();
+        std::cout << "Parsed JSON: " << parsedJsonString << std::endl;
+    } catch (const std::exception& e) {
+        // 解析失败
+        std::cerr << "JSON parse error: " << e.what() << std::endl;
+    }
 }
-
+void test_common(){
+  std::string word = "";
+  std::cout << word.empty()<<std::endl;
+}
 int main() {
     // test_curl();
     // test_sonic();
-    test_sonic2();
+    // test_sonic2();
+    // test_json();
+    test_common();
     return 0;
 }
 
