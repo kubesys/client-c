@@ -1,9 +1,7 @@
 #include "../include/registry.h"
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
+#include "util.h"
 namespace kubesys{
-        Registry::Registry(std::shared_ptr<RuleBase>ruleBase): ruleBase_(ruleBase) {};
-
         // 比较两个字符串是否相等，忽略大小写
         auto isEqualIgnoreCase(const std::string& str1, const std::string& str2) -> bool {
             return str1.size() == str2.size() &&
@@ -37,13 +35,13 @@ namespace kubesys{
         }
         
 
-        auto Registry::Learning(CURL *curl,std::string &url) -> void {
+        auto Registry::Learning(CURL *curl, std::string &url) -> void {
             std::string response;
             DoHttpRequest(curl, "GET", url, "",response);
-            json jsonData = json::parse(response);
+            nlohmann::json jsonData = nlohmann::json::parse(response);
             for(std::string path: jsonData['path']) {
                 if (url.find("/api") == 0 && (std::count(path.begin(), path.end(), '/') == 3 ) || isEqualIgnoreCase(path,"/api/v1")){
-
+                    Register(curl,url+path);
                 }
             }
         }
@@ -69,10 +67,10 @@ namespace kubesys{
 		}
 	}
         */
-        auto Registry::Register(CURL *curl,std::string &url) -> void {
+        auto Registry::Register(CURL *curl, std::string url) -> void {
             std::string response;
             DoHttpRequest(curl, "GET", url, "",response);
-            json jValues = json::parse(response);
+            nlohmann::json jValues = nlohmann::json::parse(response);
             std::string apiVersion = jValues["groupVersion"];
             for (const auto& w : jValues["resources"]) {
                 nlohmann::json jValue = w;

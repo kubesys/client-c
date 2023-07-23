@@ -2,15 +2,10 @@
 #include <iostream>
 #include <string>
 #include <nlohmann/json.hpp>
-// #include "../deps/include/sonic/sonic.h"
+#include "./include/client.h"
+#include "./include/util.h"
 using json = nlohmann::json;
-size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* responseData) ;
-size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* responseData) {
-    size_t totalSize = size * nmemb;
-    responseData->append(static_cast<char*>(contents), totalSize);
-    return totalSize;
-}
-
+namespace kubesys {
 // g++ -I../deps/include/ -march=haswell --std=c++11 test.cpp -o test_curl -lcurl
 void test_curl() {
     CURL* curl;
@@ -101,15 +96,24 @@ void test_json(){
     }
 }
 void test_common(){
-  std::string word = "";
+  std::string word = "1";
   std::cout << word.empty()<<std::endl;
 }
+
+void test_kubesys(){
+    KubernetesClient client("https://139.9.165.93:6443", "eyJhbGciOiJSUzI1NiIsImtpZCI6IkNhcVFxOHpmSHdRcTBpVFJvd2tacldzNzR2NElERHVzcG01eUM2ZmU0dHcifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJrdWJlcm5ldGVzLWNsaWVudC10b2tlbiIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJrdWJlcm5ldGVzLWNsaWVudCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjYyMjc5ZWFiLTBiZmQtNGU2NC1hYjU3LTA3OGZiODhkMTk4MSIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDprdWJlLXN5c3RlbTprdWJlcm5ldGVzLWNsaWVudCJ9.TI9mZC39ixMEq4h3cGfveKqLQSSh2y7BvvqLQixJBrFlKjsu9RJwlcGqEjh32UyshKDLtF4bM1J7w9HTMy7t74uGae9No-4Nm-R4kN3mXJA04MMdWZAV5gipDAuhR1J5R5wdoIIwYNyuUJNavWh61AqtXJkwC3uCAIYnClY9-Kx25Jif-XFlXyRkfETJxA2I9ZAbKZ3g_LOJgmVNfstjxSNTLJgRImYzQ65hrM2oZFul1_rZFPXM76rsNWwObvzPtDKPCT_yaqWt3dzAxxxOuP9EaQodVPSz7YNJb1ZHsGKgqAN9_I8MjQ2wJ0gLahyT4DFaU8rb2OvDhlDV66DoOw");
+	
+}
+}
 int main() {
+    // g++  test.cpp -o test -lcurl
+    using namespace kubesys;
     // test_curl();
     // test_sonic();
     // test_sonic2();
     // test_json();
     test_common();
+    // test_kubesys();
     return 0;
 }
 

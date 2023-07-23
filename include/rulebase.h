@@ -2,7 +2,6 @@
 #include <string>
 #include <map>
 #include <vector>
-
 namespace kubesys{
     struct RuleBase {
         std::map<std::string, std::vector<std::string>> KindToFullKindMapper;

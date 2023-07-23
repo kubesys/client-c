@@ -1,15 +1,5 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <sstream>
-
-struct Config {
-    std::string Server;
-    std::string ClientCertificateData;
-    std::string ClientKeyData;
-    std::string CertificateAuthorityData;
-};
-
+#include "../include/tls.h"
+namespace kubesys {
 Config* NewForConfig(const std::string& kubeConfig) {
     std::ifstream file(kubeConfig);
     if (!file.is_open()) {
@@ -52,7 +42,8 @@ Config* NewForConfig(const std::string& kubeConfig) {
 
     return config;
 }
-
+}
+/*
 int main() {
     std::string kubeConfig = "path_to_kubeconfig"; 
     Config* config = NewForConfig(kubeConfig);
@@ -67,3 +58,4 @@ int main() {
 
     return 0;
 }
+*/
