@@ -8,6 +8,8 @@ namespace kubesys {
         curl_slist* headers = nullptr;
         headers = curl_slist_append(headers, ("Authorization: Bearer " + token_).c_str());
         curl_easy_setopt(curl_, CURLOPT_HTTPHEADER, headers);
+        curl_easy_setopt(curl_, CURLOPT_SSL_VERIFYPEER, 0L);
+        curl_easy_setopt(curl_, CURLOPT_SSL_VERIFYHOST, 0L);
     }
 
     KubernetesClient::KubernetesClient(const std::string& url, const std::string& token, std::unique_ptr<KubernetesAnalyzer> analyzer)
@@ -34,6 +36,8 @@ namespace kubesys {
             curl_slist* headers = nullptr;
             headers = curl_slist_append(headers, ("Authorization: Bearer " + token_).c_str());
             curl_easy_setopt(curl_, CURLOPT_HTTPHEADER, headers);
+            curl_easy_setopt(curl_, CURLOPT_SSL_VERIFYPEER, 0L);
+            curl_easy_setopt(curl_, CURLOPT_SSL_VERIFYHOST, 0L);
         } else if (ft == CONFIGFILE){
             if(filepath.empty()) {
                 filepath = "/etc/kubernetes/admin.conf";

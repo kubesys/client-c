@@ -1,5 +1,5 @@
 CC := g++
-CFLAGS := -Wall -std=c++11
+CFLAGS := -Wall -std=c++14
 LDFLAGS := -lcurl
 SRC_DIR := .
 INCLUDE_DIR := include
@@ -23,4 +23,4 @@ $(KUBESYS_DIR)/%.o: $(KUBESYS_DIR)/%.cpp $(KUBESYS_HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(EXECUTABLE)
+	rm -f $(OBJS) 

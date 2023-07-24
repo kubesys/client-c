@@ -102,6 +102,9 @@ void test_json(){
         for (const auto& hobby : hobbies) {
             std::cout << "- " << hobby << std::endl;
         }
+        for (const std::string &hobby: hobbies) {
+            std::cout << "- " << hobby << std::endl;
+        }
 
         // 将解析后的JSON数据再转换为字符串
         std::string parsedJsonString = jsonData.dump();
@@ -113,29 +116,19 @@ void test_json(){
 }
 void test_common(){
   std::string word = "1";
+  std::string url = "/apis/admissionregistration.k8s.io/v1";
+  auto flag = url.find("/api") == 0;
   std::cout << word.empty()<<std::endl;
+  std::cout <<  flag << std::endl;
 }
-void test_kubesys_get(){
-    CURL* curl;
-    curl = curl_easy_init();
-    if (curl)
-    {
-        std::string method = "GET";
-        curl_easy_setopt(curl, CURLOPT_URL, "www.baidu.com");
-        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method.c_str());
-        std::string responseData;
-        KubernetesClient client("https://139.9.165.93:6443", "eyJhbGciOiJSUzI1NiIsImtpZCI6IkNhcVFxOHpmSHdRcTBpVFJvd2tacldzNzR2NElERHVzcG01eUM2ZmU0dHcifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJrdWJlcm5ldGVzLWNsaWVudC10b2tlbiIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJrdWJlcm5ldGVzLWNsaWVudCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjYyMjc5ZWFiLTBiZmQtNGU2NC1hYjU3LTA3OGZiODhkMTk4MSIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDprdWJlLXN5c3RlbTprdWJlcm5ldGVzLWNsaWVudCJ9.TI9mZC39ixMEq4h3cGfveKqLQSSh2y7BvvqLQixJBrFlKjsu9RJwlcGqEjh32UyshKDLtF4bM1J7w9HTMy7t74uGae9No-4Nm-R4kN3mXJA04MMdWZAV5gipDAuhR1J5R5wdoIIwYNyuUJNavWh61AqtXJkwC3uCAIYnClY9-Kx25Jif-XFlXyRkfETJxA2I9ZAbKZ3g_LOJgmVNfstjxSNTLJgRImYzQ65hrM2oZFul1_rZFPXM76rsNWwObvzPtDKPCT_yaqWt3dzAxxxOuP9EaQodVPSz7YNJb1ZHsGKgqAN9_I8MjQ2wJ0gLahyT4DFaU8rb2OvDhlDV66DoOw");
-        client.Init();
-    }
-}
+
 void test_kubesys(){
     std::string response;
     KubernetesClient client("https://139.9.165.93:6443", "eyJhbGciOiJSUzI1NiIsImtpZCI6IkNhcVFxOHpmSHdRcTBpVFJvd2tacldzNzR2NElERHVzcG01eUM2ZmU0dHcifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJrdWJlcm5ldGVzLWNsaWVudC10b2tlbiIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJrdWJlcm5ldGVzLWNsaWVudCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjYyMjc5ZWFiLTBiZmQtNGU2NC1hYjU3LTA3OGZiODhkMTk4MSIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDprdWJlLXN5c3RlbTprdWJlcm5ldGVzLWNsaWVudCJ9.TI9mZC39ixMEq4h3cGfveKqLQSSh2y7BvvqLQixJBrFlKjsu9RJwlcGqEjh32UyshKDLtF4bM1J7w9HTMy7t74uGae9No-4Nm-R4kN3mXJA04MMdWZAV5gipDAuhR1J5R5wdoIIwYNyuUJNavWh61AqtXJkwC3uCAIYnClY9-Kx25Jif-XFlXyRkfETJxA2I9ZAbKZ3g_LOJgmVNfstjxSNTLJgRImYzQ65hrM2oZFul1_rZFPXM76rsNWwObvzPtDKPCT_yaqWt3dzAxxxOuP9EaQodVPSz7YNJb1ZHsGKgqAN9_I8MjQ2wJ0gLahyT4DFaU8rb2OvDhlDV66DoOw");
-    std::cout << client.url_ << "--" << client.token_ <<std::endl;
-    curl_easy_setopt(client.curl_, CURLOPT_SSL_VERIFYPEER, 0L);
-    curl_easy_setopt(client.curl_, CURLOPT_SSL_VERIFYHOST, 0L);
-    DoHttpRequest(client.curl_, "GET", client.url_, "",response);
-    std::cout << response <<std::endl;
+    // curl_easy_setopt(client.curl_, CURLOPT_SSL_VERIFYPEER, 0L);
+    // curl_easy_setopt(client.curl_, CURLOPT_SSL_VERIFYHOST, 0L);
+    // DoHttpRequest(client.curl_, "GET", client.url_, "",response);
+    client.Init();
 }
 }
 int main() {
@@ -145,7 +138,6 @@ int main() {
     // test_json();
     // test_common();
     test_kubesys();
-    // test_kubesys_get();
     return 0;
 }
 
