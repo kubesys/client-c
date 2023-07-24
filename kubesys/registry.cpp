@@ -10,7 +10,7 @@ namespace kubesys{
             });
     }
 
-    auto getFullKind(const std::string& apiVersion, const std::string& shortKind) -> std::string {
+    auto getFullKind(const std::string& shortKind, const std::string& apiVersion) -> std::string {
         size_t index = apiVersion.find('/');
         std::string apiGroup = "";
         if (index != std::string::npos) {
@@ -51,18 +51,19 @@ namespace kubesys{
         DoHttpRequest(curl, "GET", url, "",response);
         nlohmann::json jValues = nlohmann::json::parse(response);
         std::string apiVersion = jValues["groupVersion"];
-        std::cout << "Register "<< url  <<std::endl;
         for (const auto& w : jValues["resources"]) {
             nlohmann::json jValue = w;
             std::string shortKind = jValue["kind"].get<std::string>();
             std::string fullKind = getFullKind(shortKind, apiVersion);
-            ruleBase_->KindToFullKindMapper[shortKind].push_back(fullKind);
-            ruleBase_->FullKindToApiPrefixMapper[fullKind] = url; 
-            ruleBase_->FullKindToNameMapper[fullKind] = jValue["name"].get<std::string>();
-            ruleBase_->FullKindToNamespaceMapper[fullKind] = jValue["namespaced"].get<bool>();
-            ruleBase_->FullKindToVersionMapper[fullKind] = apiVersion;
-            ruleBase_->FullKindToGroupMapper[fullKind] = getGroup(apiVersion);
-            ruleBase_->FullKindToVerbsMapper[fullKind] = jValue["verbs"].get<std::vector<std::string>>();
+            if(ruleBase_->FullKindToApiPrefixMapper.count(fullKind) == 0) {
+                ruleBase_->KindToFullKindMapper[shortKind].push_back(fullKind);
+                ruleBase_->FullKindToApiPrefixMapper[fullKind] = url; 
+                ruleBase_->FullKindToNameMapper[fullKind] = jValue["name"].get<std::string>();
+                ruleBase_->FullKindToNamespaceMapper[fullKind] = jValue["namespaced"].get<bool>();
+                ruleBase_->FullKindToVersionMapper[fullKind] = apiVersion;
+                ruleBase_->FullKindToGroupMapper[fullKind] = getGroup(apiVersion);
+                ruleBase_->FullKindToVerbsMapper[fullKind] = jValue["verbs"].get<std::vector<std::string>>();
+            }
         }
     }
 }

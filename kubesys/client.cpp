@@ -68,8 +68,44 @@ namespace kubesys {
         return response;
     }
 
-    
-    
+    auto KubernetesClient::GetResource(const std::string& kind, const std::string& nameSpace, const std::string& name) -> std::string {
+        std::string fullKind = toFullKind(kind, analyzer_->ruleBase_->KindToFullKindMapper);
+        if(fullKind.empty()){
+            return "";
+        }
+        std::string url = GetResourceUrl(fullKind, nameSpace,name);
+        std::string response;
+        DoHttpRequest(curl_,"GET",url,"",response);
+        return response;
+    }
+
+    auto KubernetesClient::CreateResource(const std::string &jsonStr) -> std::string {
+        auto parsedJson = nlohmann::json::parse(jsonStr);
+        std::string url = CreateResourceUrl(fullKind(parsedJson), getNamespace(parsedJson));
+        std::string response;
+        DoHttpRequest(curl_,"POST",url,jsonStr,response);
+        return response;
+    }
+
+    auto KubernetesClient::UpdateResource(const std::string &jsonStr) -> std::string {
+        auto parsedJson = nlohmann::json::parse(jsonStr);
+        std::string url = UpdateResourceUrl(fullKind(parsedJson), getNamespace(parsedJson),getName(parsedJson));
+        std::string response;
+        DoHttpRequest(curl_,"PUT",url,jsonStr,response);
+        return response;
+    }
+
+    auto KubernetesClient::DeleteResource(const std::string& kind, const std::string& nameSpace, const std::string& name) -> std::string {
+        std::string fullKind = toFullKind(kind, analyzer_->ruleBase_->KindToFullKindMapper);
+        if(fullKind.empty()){
+            return "";
+        }
+        std::string url = DeleteResourceUrl(fullKind, nameSpace,name);
+        std::string response;
+        DoHttpRequest(curl_,"DELETE",url,"",response);
+        return response;
+    }
+
 }
 
 

@@ -61,5 +61,8 @@
         "regex": "cpp",
         "shared_mutex": "cpp"
     },
-    "C_Cpp.errorSquiggles": "enabled"
+    "C_Cpp.errorSquiggles": "enabled",
+    "search.exclude": {
+        "*.o":true,
+    }
 }

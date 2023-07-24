@@ -21,11 +21,13 @@ namespace kubesys {
             curl_easy_cleanup(curl_);
         };
         auto Init() -> void;
-
         auto ListResources(const std::string& kind, const std::string& nameSpace) -> std::string;
+        auto GetResource(const std::string& kind, const std::string& nameSpace, const std::string& name) -> std::string;
+        auto CreateResource(const std::string &jsonStr) -> std::string;
+        auto UpdateResource(const std::string &jsonStr) -> std::string;
+        auto DeleteResource(const std::string& kind, const std::string& nameSpace, const std::string& name) -> std::string;
         std::string url_;
         std::string token_;
-        // int rescode = curl_global_init(CURL_GLOBAL_ALL);
         CURL *curl_ = curl_easy_init();
     private:
         // extractor

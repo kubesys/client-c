@@ -7,7 +7,7 @@ namespace kubesys {
         return totalSize;
     }
 
-    auto DoHttpRequest(CURL* curl_, const std::string& method, const std::string& url, const std::string& request,std::string& response) -> void {
+    bool DoHttpRequest(CURL* curl_, const std::string& method, const std::string& url, const std::string& request,std::string& response) {
         //exist requestbody,set content-type
         if (!request.empty()) {
             curl_slist* headers = nullptr;
@@ -25,7 +25,9 @@ namespace kubesys {
         auto res = curl_easy_perform(curl_);
         if (res != CURLE_OK) {
             std::cerr << "HTTP request failed: " << curl_easy_strerror(res) << std::endl;
+            return false;
         }
+        return true;
     }
 
     std::string checkedUrl(const std::string& url) {
@@ -77,6 +79,7 @@ namespace kubesys {
                 for (const auto& s : mapper[kind]) {
                     value += "," + s;
                 }
+                std::cout <<mapper[kind].size() <<std::endl;
                 std::cerr <<"Please input fullKind: " + value.substr(1) << std::endl;
                 return "";
             }
@@ -93,10 +96,10 @@ namespace kubesys {
         return "";
     }
 
-    std::string fullKind(const std::string& jsonObj) {
+    std::string fullKind(const nlohmann::json& parsedJson) {
         std::string kind, apiVersion;
         try {
-            auto parsedJson = nlohmann::json::parse(jsonObj);
+            // auto parsedJson = nlohmann::json::parse(jsonObj);
             kind = parsedJson["kind"].get<std::string>();
             apiVersion = parsedJson["apiVersion"].get<std::string>();
         } catch (const std::exception& e) {
@@ -111,5 +114,14 @@ namespace kubesys {
         return apiVersion.substr(0, index) + "." + kind;
     }
 
+    std::string getNamespace(const nlohmann::json& jsonObj) {
+        if (jsonObj.contains("metadata") && jsonObj["metadata"].contains("namespace")) {
+            return jsonObj["metadata"]["namespace"].get<std::string>();
+        }
+        return "";
+    }
     
+    std::string getName(const nlohmann::json& jsonObj) {
+	    return jsonObj["metadata"]["name"].get<std::string>();
+    }
 }
