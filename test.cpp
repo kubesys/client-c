@@ -115,7 +115,7 @@ void test_json(){
     }
 }
 void test_common(){
-  std::string word = "1";
+  std::string word = "12";
   std::string url = "/apis/admissionregistration.k8s.io/v1";
   auto flag = url.find("/api") == 0;
   std::cout << word.empty()<<std::endl;
