@@ -1,25 +1,26 @@
-# 编译器和选项设置
-CXX = g++
-CXXFLAGS = -std=c++17 -Iinclude
+CC := g++
+CFLAGS := -Wall -std=c++11
+LDFLAGS := -lcurl
+SRC_DIR := .
+INCLUDE_DIR := include
+KUBESYS_DIR := kubesys
 
-# 查找kubesys目录下的所有cpp文件
-SRC_FILES = $(wildcard kubesys/*.cpp) test.cpp
-
-# 生成目标文件列表
-OBJ_FILES = $(SRC_FILES:.cpp=.o)
-
-# 最终的可执行文件名
-EXECUTABLE = my_test
+INCLUDE_FILES := $(wildcard $(INCLUDE_DIR)/*.h)
+KUBESYS_SRCS := $(wildcard $(KUBESYS_DIR)/*.cpp)
+KUBESYS_HEADERS := $(wildcard $(KUBESYS_DIR)/*.h)
+OBJS := $(SRC_DIR)/test.o $(KUBESYS_SRCS:.cpp=.o)
+EXECUTABLE := test
 
 all: $(EXECUTABLE)
 
-$(EXECUTABLE): $(OBJ_FILES)
-	$(CXX) $(CXXFLAGS) $^ -o $@
+$(EXECUTABLE): $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $(EXECUTABLE) $(LDFLAGS)
 
-# 编译每个源文件
-%.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+$(SRC_DIR)/test.o: $(SRC_DIR)/test.cpp $(INCLUDE_FILES)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(KUBESYS_DIR)/%.o: $(KUBESYS_DIR)/%.cpp $(KUBESYS_HEADERS)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJ_FILES) $(EXECUTABLE)
-
+	rm -f $(OBJS) $(EXECUTABLE)

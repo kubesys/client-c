@@ -25,6 +25,8 @@ namespace kubesys {
         auto ListResources(const std::string& kind, const std::string& nameSpace) -> std::string;
         std::string url_;
         std::string token_;
+        // int rescode = curl_global_init(CURL_GLOBAL_ALL);
+        CURL *curl_ = curl_easy_init();
     private:
         // extractor
         auto BaseUrl(const std::string &fullKind, const std::string &nameSpace) -> std::string;
@@ -36,7 +38,6 @@ namespace kubesys {
         auto UpdateResourceStatusUrl(const std::string& fullKind, const std::string& nameSpace, const std::string& name) -> std::string;
         auto BindingResourceStatusUrl(const std::string& fullKind, const std::string& nameSpace, const std::string& name) -> std::string;
 
-        CURL *curl_ = curl_easy_init();
         std::unique_ptr<KubernetesAnalyzer> analyzer_;
     };
 }
