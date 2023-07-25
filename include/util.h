@@ -20,4 +20,5 @@ namespace kubesys{
     std::string fullKind(const nlohmann::json& parsedJson);
     std::string getNamespace(const nlohmann::json& jsonObj);
     std::string getName(const nlohmann::json& jsonObj);
+    std::string kind(const std::string& fullKind);
 }

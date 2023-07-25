@@ -124,4 +124,12 @@ namespace kubesys {
     std::string getName(const nlohmann::json& jsonObj) {
 	    return jsonObj["metadata"]["name"].get<std::string>();
     }
+
+    std::string kind(const std::string& fullKind) {
+        size_t index = fullKind.find_last_of(".");
+        if (index == std::string::npos) {
+            return fullKind;
+        }
+        return fullKind.substr(index + 1);
+    }
 }
