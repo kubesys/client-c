@@ -1,12 +1,12 @@
-#include "../include/registry.h"
-#include <nlohmann/json.hpp>
-#include "../include/util.h"
-
 /*
  Copyright (2023, )  Institute of Software, Chinese Academy of Sciences
  Author:    lvxin22@otcaix.iscas.ac.cn
             wuheng@iscas.ac.cn
 */
+
+#include "../include/registry.h"
+#include <nlohmann/json.hpp>
+#include "../include/util.h"
 
 namespace kubesys{
     // 比较两个字符串是否相等，忽略大小写
