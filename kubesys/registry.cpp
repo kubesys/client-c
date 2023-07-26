@@ -1,6 +1,13 @@
 #include "../include/registry.h"
 #include <nlohmann/json.hpp>
 #include "../include/util.h"
+
+/*
+ Copyright (2023, )  Institute of Software, Chinese Academy of Sciences
+ Author:    lvxin22@otcaix.iscas.ac.cn
+            wuheng@iscas.ac.cn
+*/
+
 namespace kubesys{
     // 比较两个字符串是否相等，忽略大小写
     auto isEqualIgnoreCase(const std::string& str1, const std::string& str2) -> bool {
@@ -36,6 +43,7 @@ namespace kubesys{
     
 
     auto Registry::Learning(CURL *curl, std::string &url) -> void {
+        std::cout << "Learning url1:" << url  << std::endl;
         std::string response;
         DoHttpRequest(curl, "GET", url, "",response);
         nlohmann::json jsonData = nlohmann::json::parse(response);

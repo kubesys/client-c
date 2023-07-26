@@ -10,6 +10,7 @@ namespace kubesys {
         TOKENFIlE,
         CONFIGFILE,
     } FileType;
+    class KubernetesWatcher;
     class KubernetesClient {
     public:
         KubernetesClient(const std::string &url, const std::string &token);

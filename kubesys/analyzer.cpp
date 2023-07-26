@@ -1,3 +1,9 @@
+/*
+ Copyright (2023, )  Institute of Software, Chinese Academy of Sciences
+ Author:    lvxin22@otcaix.iscas.ac.cn
+            wuheng@iscas.ac.cn
+*/
+
 #include <memory> 
 #include "../include/analyzer.h"
 

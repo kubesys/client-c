@@ -11,7 +11,6 @@ public:
     virtual void DoDeleted(std::map<std::string, std::string> obj) = 0;
     virtual ~WatchHandler() {}
 };
-
 class KubernetesWatcher {
 private:
     std::unique_ptr<KubernetesClient> client_;

@@ -110,16 +110,17 @@ void test_kubesys(){
     // KubernetesClient client("https://139.9.165.93:6443", "eyJhbGciOiJSUzI1NiIsImtpZCI6IkNhcVFxOHpmSHdRcTBpVFJvd2tacldzNzR2NElERHVzcG01eUM2ZmU0dHcifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJrdWJlcm5ldGVzLWNsaWVudC10b2tlbiIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJrdWJlcm5ldGVzLWNsaWVudCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjYyMjc5ZWFiLTBiZmQtNGU2NC1hYjU3LTA3OGZiODhkMTk4MSIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDprdWJlLXN5c3RlbTprdWJlcm5ldGVzLWNsaWVudCJ9.TI9mZC39ixMEq4h3cGfveKqLQSSh2y7BvvqLQixJBrFlKjsu9RJwlcGqEjh32UyshKDLtF4bM1J7w9HTMy7t74uGae9No-4Nm-R4kN3mXJA04MMdWZAV5gipDAuhR1J5R5wdoIIwYNyuUJNavWh61AqtXJkwC3uCAIYnClY9-Kx25Jif-XFlXyRkfETJxA2I9ZAbKZ3g_LOJgmVNfstjxSNTLJgRImYzQ65hrM2oZFul1_rZFPXM76rsNWwObvzPtDKPCT_yaqWt3dzAxxxOuP9EaQodVPSz7YNJb1ZHsGKgqAN9_I8MjQ2wJ0gLahyT4DFaU8rb2OvDhlDV66DoOw");
     // ubuntu token
     std::string response;
-    std::string token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IkF1V0FNbU5Dekluc2pWUUpkV3BpSTZZWktseG9PRTVyc0dHb25VdDdWdXcifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJrdWJlcm5ldGVzLWNsaWVudC10b2tlbiIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJrdWJlcm5ldGVzLWNsaWVudCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImNkNzMyNThlLTJlY2MtNDNiYy05NTVlLTQ3YmI0NzUxMDhlMCIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDprdWJlLXN5c3RlbTprdWJlcm5ldGVzLWNsaWVudCJ9.IV4yGnfB7bsgAOpdNCPErKbJpThpHGo41KwTIrRCoLwkUEJkXX2ngPbct0bXIx7TmyCy0c_U_Mpf956PeyWdh07AeK7dnnBQiRzSN5355-7CrJzmma3XOOWdteaI64gSbkcaSKvLdnYLWVA2yY4fEnaqc4giH4iaKme-4Xy1-GJthTYpJo3IyPAe40BN0LYewNLURPFce-nXVWKszP5KuVOP458_SK5qhh9MDcMCLYRHWspmcbjMeGK4RjH0cc08KSla-GUM5UdkS14rrBPoUDLuLb_VrsQYEwhXRhP7HE6HTwQd_ZJvrq4ABZphVcHKM2EAyqjUNSnlJNjcrKUMSQ";
+    std::string token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IkF1V0FNbU5Dekluc2pWUUpkV3BpSTZZWktseG9PRTVyc0dHb25VdDdWdXcifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJrdWJlcm5ldGVzLWNsaWVudC10b2tlbiIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJrdWJlcm5ldGVzLWNsaWVudCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImNkNzMyNThlLTJlY2MtNDNiYy05NTVlLTQ3YmI0NzUxMDhlMCIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDprdWJlLXN5c3RlbTprdWJlcm5ldGVzLWNsaWVudCJ9.IV4yGnfB7bsgAOpdNCPErKbJpThpHGo41KwTIrRCoLwkUEJkXX2ngPbct0bXIx7TmyCy0c_U_Mpf956PeyWdh07AeK7dnnBQiRzSN5355-7CrJzmma3XOOWdteaI64gSbkcaSKvLdnYLWVA2yY4fEnaqc4giH4iaKme-4Xy1-GJthTYpJo3IyPAe40BN0LYewNLURPFce-nXVWKszP5KuVOP458_SK5qhh9MDcMCLYRHWspmcbjMeGK4RjH0cc08KSla-GUM5UdkS14rrBPoUDLuLb_VrsQYEwhXRhP7HE6HTwQd_ZJvrq4ABZphVcHKM2EAyqjUNSnlJNjcrKUMSQ"; 
     KubernetesClient client("https://192.168.203.130:6443",token);
     client.Init();
-    response = client.ListResources("Deployment","");
+    // response = client.ListResources("Deployment","");
+    // std::cout << "list ListResources: " <<response <<std::endl;
     
-    // response = client.CreateResource(createPod());
-	// fmt.Println(kubesys.ToGolangMap(jsonRes)["metadata"].(map[string]interface{})["name"].(string))
-    // response = client.GetResource("Pod", "default", "busybox");
+    response = client.CreateResource(createPod());
+    std::cout << "create pod: " <<response <<std::endl;
+    response = client.GetResource("Pod", "default", "busybox");
     
-    std::cout << response <<std::endl;
+    std::cout << "get pod: "<< response <<std::endl;
 }
 }
 int main() {

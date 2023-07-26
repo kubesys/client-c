@@ -1,4 +1,11 @@
+/*
+ Copyright (2023, )  Institute of Software, Chinese Academy of Sciences
+ Author:    lvxin22@otcaix.iscas.ac.cn
+            wuheng@iscas.ac.cn
+*/
+
 #include "../include/tls.h"
+
 namespace kubesys {
 Config* NewForConfig(const std::string& kubeConfig) {
     std::ifstream file(kubeConfig);

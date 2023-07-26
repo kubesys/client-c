@@ -1,5 +1,12 @@
+/*
+ Copyright (2023, )  Institute of Software, Chinese Academy of Sciences
+ Author:    lvxin22@otcaix.iscas.ac.cn
+            wuheng@iscas.ac.cn
+*/
+
 #include "../include/client.h"
 #include "../include/util.h"
+
 namespace kubesys {
     auto KubernetesClient::BaseUrl(const std::string &fullKind, const std::string &nameSpace) -> std::string {
         std::string url = analyzer_->ruleBase_->FullKindToApiPrefixMapper[fullKind] + "/";

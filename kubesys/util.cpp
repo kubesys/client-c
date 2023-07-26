@@ -1,5 +1,11 @@
+/*
+ Copyright (2023, )  Institute of Software, Chinese Academy of Sciences
+ Author:    lvxin22@otcaix.iscas.ac.cn
+            wuheng@iscas.ac.cn
+*/
+
 #include "../include/util.h"
-using json = nlohmann::json;
+
 namespace kubesys {
     size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* response) {
         size_t totalSize = size * nmemb;
@@ -10,9 +16,9 @@ namespace kubesys {
     bool DoHttpRequest(CURL* curl_, const std::string& method, const std::string& url, const std::string& request,std::string& response) {
         //exist requestbody,set content-type
         if (!request.empty()) {
-            curl_slist* headers = nullptr;
-            headers = curl_slist_append(headers, "Content-Type: application/json");
-            curl_easy_setopt(curl_, CURLOPT_HTTPHEADER, headers);
+            // curl_slist* headers = nullptr;
+            // headers = curl_slist_append(headers, "Content-Type: application/json");
+            // curl_easy_setopt(curl_, CURLOPT_HTTPHEADER, newHeaders);
             curl_easy_setopt(curl_, CURLOPT_POSTFIELDS, request.c_str());
         }
         
@@ -22,6 +28,7 @@ namespace kubesys {
         curl_easy_setopt(curl_, CURLOPT_WRITEFUNCTION, WriteCallback);
         curl_easy_setopt(curl_, CURLOPT_WRITEDATA, &response);
         
+        // curl_easy_setopt(curl_, CURLOPT_VERBOSE, 1L);
         auto res = curl_easy_perform(curl_);
         if (res != CURLE_OK) {
             std::cerr << "HTTP request failed: " << curl_easy_strerror(res) << std::endl;
@@ -45,14 +52,14 @@ namespace kubesys {
         return token;
     }
 
-    json ToJsonObject(const std::vector<uint8_t>& bytes) {
+    nlohmann::json ToJsonObject(const std::vector<uint8_t>& bytes) {
         std::string jsonStr(bytes.begin(), bytes.end());
-        return json::parse(jsonStr);
+        return nlohmann::json::parse(jsonStr);
     }
 
-    std::map<std::string, json> ToGolangMap(const std::vector<uint8_t>& bytes) {
+    std::map<std::string, nlohmann::json> ToGolangMap(const std::vector<uint8_t>& bytes) {
         std::string jsonStr(bytes.begin(), bytes.end());
-        return json::parse(jsonStr).get<std::map<std::string, json>>();
+        return nlohmann::json::parse(jsonStr).get<std::map<std::string, nlohmann::json>>();
     }
 
     std::string readFile(const std::string& filePath) {

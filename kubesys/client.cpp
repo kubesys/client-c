@@ -1,12 +1,19 @@
+/*
+ Copyright (2023, )  Institute of Software, Chinese Academy of Sciences
+ Author:    lvxin22@otcaix.iscas.ac.cn
+            wuheng@iscas.ac.cn
+*/
+
 #include "../include/client.h"
 #include "../include/tls.h"
+#include "../include/watcher.h"
 
-namespace kubesys {
-   
+namespace kubesys {  
     KubernetesClient::KubernetesClient(const std::string& url, const std::string& token)
-        :url_(url), token_(token), analyzer_(std::shared_ptr<KubernetesAnalyzer>()) {
+        :url_(url), token_(token), analyzer_(std::make_shared<KubernetesAnalyzer>()) {
         curl_slist* headers = nullptr;
         headers = curl_slist_append(headers, ("Authorization: Bearer " + token_).c_str());
+        headers = curl_slist_append(headers, "Content-Type: application/json");
         curl_easy_setopt(curl_, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt(curl_, CURLOPT_SSL_VERIFYPEER, 0L);
         curl_easy_setopt(curl_, CURLOPT_SSL_VERIFYHOST, 0L);
@@ -66,6 +73,7 @@ namespace kubesys {
         }
         std::string url = ListResourcesUrl(fullKind, nameSpace);
         std::string response;
+        std::cout << " ListResources url=" << url << std::endl;
         DoHttpRequest(curl_,"GET",url,"",response);
         return response;
     }
@@ -77,14 +85,16 @@ namespace kubesys {
         }
         std::string url = GetResourceUrl(fullKind, nameSpace,name);
         std::string response;
+        std::cout << " GetResource url=" << url << std::endl;
         DoHttpRequest(curl_,"GET",url,"",response);
-        return response;
+        return nlohmann::json::parse(response)["metadata"]["name"];
     }
 
     auto KubernetesClient::CreateResource(const std::string &jsonStr) -> std::string {
         auto parsedJson = nlohmann::json::parse(jsonStr);
         std::string url = CreateResourceUrl(fullKind(parsedJson), getNamespace(parsedJson));
         std::string response;
+        std::cout << " CreateResource url=" << url << std::endl;
         DoHttpRequest(curl_,"POST",url,jsonStr,response);
         return response;
     }
@@ -93,6 +103,7 @@ namespace kubesys {
         auto parsedJson = nlohmann::json::parse(jsonStr);
         std::string url = UpdateResourceUrl(fullKind(parsedJson), getNamespace(parsedJson),getName(parsedJson));
         std::string response;
+        std::cout << " UpdateResource url=" << url << std::endl;
         DoHttpRequest(curl_,"PUT",url,jsonStr,response);
         return response;
     }
@@ -104,6 +115,7 @@ namespace kubesys {
         }
         std::string url = DeleteResourceUrl(fullKind, nameSpace,name);
         std::string response;
+        std::cout << " DeleteResource url=" << url << std::endl;
         DoHttpRequest(curl_,"DELETE",url,"",response);
         return response;
     }
@@ -112,6 +124,7 @@ namespace kubesys {
         auto parsedJson = nlohmann::json::parse(jsonStr);
         std::string url = UpdateResourceStatusUrl(fullKind(parsedJson), getNamespace(parsedJson), getName(parsedJson));
 	    std::string response;
+        std::cout << " UpdateResourceStatus url=" << url << std::endl;
         DoHttpRequest(curl_,"PUT",url,jsonStr,response);
         return response;
     }
@@ -133,10 +146,11 @@ namespace kubesys {
         podJson["target"] = target;
         std::string url = BindingResourceStatusUrl(fullKind(pod), getNamespace(pod), getName(pod));
         std::string response;
+        std::cout << " BindResources url=" << url << std::endl;
         DoHttpRequest(curl_,"POST",url,podJson.dump(),response);
         return response;
     }
-
+    
     auto KubernetesClient::WatchResource(const std::string &kind , const std::string &nameSpace, const std::string &name , std::shared_ptr<KubernetesWatcher> watcher) -> void {
         std::string fullKind = toFullKind(kind,analyzer_->ruleBase_->KindToFullKindMapper);
         if (fullKind.empty()) {
@@ -160,7 +174,7 @@ namespace kubesys {
         url += "/?watch=true&timeoutSeconds=315360000";
         watcher->Watching(url);
     }
-
+    
     auto KubernetesClient::ListResourcesWithLabelSelector(const std::string &kind , const std::string &nameSpace, std::map<std::string,std::string> labels) ->std::string {
         auto fullKind = toFullKind(kind, analyzer_->ruleBase_->KindToFullKindMapper);
         if(fullKind.empty()) {
@@ -172,6 +186,7 @@ namespace kubesys {
         }
         url = url.substr(0, url.size() - 1);
         std::string response;
+        std::cout << " ListResourcesWithLabelSelector url=" << url << std::endl;
         DoHttpRequest(curl_,"GET",url,"",response);
         return response;
     }
@@ -187,6 +202,7 @@ namespace kubesys {
         }
         url = url.substr(0, url.size() - 1);
         std::string response;
+        std::cout << " ListResourcesWithFieldSelector url=" << url << std::endl;
         DoHttpRequest(curl_,"GET",url,"",response);
         return response;
     }
