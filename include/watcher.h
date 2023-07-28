@@ -13,16 +13,19 @@ public:
 };
 class KubernetesWatcher {
 private:
-    std::unique_ptr<KubernetesClient> client_;
+    std::shared_ptr<KubernetesClient> client_;
     std::unique_ptr<WatchHandler> handler_;
 
 public:
-    KubernetesWatcher(std::unique_ptr<KubernetesClient> client, std::unique_ptr<WatchHandler> handler) : client_(std::move(client)), handler_(std::move(handler)) {};
+    KubernetesWatcher(std::shared_ptr<KubernetesClient> client, std::unique_ptr<WatchHandler> handler) : client_(client), handler_(std::move(handler)) {};
     void Watching(std::string url) {
-        auto wclinet = KubernetesClient(url, client_->token_, client_->analyzer_);
-        wclinet.curl_ = client_->curl_;
+        // auto wclinet = KubernetesClient(url, client_->token_, client_->analyzer_);
+        // auto wclinet = KubernetesClient(url, client_->curl_, client_->analyzer_);
+        // wclinet.curl_ = client_->curl_;
         std::string response;
-        DoHttpRequest(wclinet.curl_, "GET", url, "", response);
+        std::cout<< "watch url:" << url <<std::endl;
+        DoHttpRequest(client_->curl_, "GET", url, "", response);
+        std::cout<< "watch response:" << response <<std::endl;
         std::istringstream iss(response);
         std::string line;
         while (std::getline(iss, line)) {

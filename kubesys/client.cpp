@@ -10,7 +10,7 @@
 
 namespace kubesys {  
     KubernetesClient::KubernetesClient(const std::string& url, const std::string& token)
-        :url_(url), token_(token), analyzer_(std::make_shared<KubernetesAnalyzer>()) {
+        :url_(url), token_(token), analyzer_(std::make_shared<KubernetesAnalyzer>()),curl_(curl_easy_init()) {
         curl_slist* headers = nullptr;
         headers = curl_slist_append(headers, ("Authorization: Bearer " + token_).c_str());
         headers = curl_slist_append(headers, "Content-Type: application/json");
@@ -20,7 +20,7 @@ namespace kubesys {
     }
 
     KubernetesClient::KubernetesClient(const std::string& url, const std::string& token, std::shared_ptr<KubernetesAnalyzer> analyzer)
-        :url_(url), token_(token), analyzer_(std::move(analyzer)) {
+        :url_(url), token_(token), analyzer_(std::move(analyzer)),curl_(curl_easy_init()) {
         curl_slist* headers = nullptr;
         headers = curl_slist_append(headers, ("Authorization: Bearer " + token_).c_str());
         curl_easy_setopt(curl_, CURLOPT_HTTPHEADER, headers);
@@ -28,7 +28,7 @@ namespace kubesys {
         curl_easy_setopt(curl_, CURLOPT_SSL_VERIFYHOST, 0L);
     }
 
-    KubernetesClient::KubernetesClient(std::string& filepath,FileType ft){
+    KubernetesClient::KubernetesClient(std::string filepath,FileType ft):analyzer_(std::make_shared<KubernetesAnalyzer>()),curl_(curl_easy_init()){
         if(ft == TOKENFIlE){
             if(filepath.empty()) {
                 filepath = "/var/run/secrets/kubernetes.io/serviceaccount/token";
@@ -40,7 +40,7 @@ namespace kubesys {
                 throw std::runtime_error("unable to load in-cluster configuration, KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT must be defined");
             }
             std::string token = readFile(filepath);
-            kubesys::checkedToken(token);
+            checkedToken(token);
             url_ = "https://" + host + port ;
             curl_slist* headers = nullptr;
             headers = curl_slist_append(headers, ("Authorization: Bearer " + token_).c_str());
@@ -51,13 +51,19 @@ namespace kubesys {
             if(filepath.empty()) {
                 filepath = "/etc/kubernetes/admin.conf";
             }
-            Config* config = NewForConfig(filepath);
-            // 设置客户端证书和密钥
-            curl_easy_setopt(curl_, CURLOPT_SSLCERT, config->ClientCertificateData.c_str());
-            curl_easy_setopt(curl_, CURLOPT_SSLKEY, config->ClientKeyData.c_str());
-            // 设置服务器证书链（证书授权数据）
-            curl_easy_setopt(curl_, CURLOPT_CAINFO, config->CertificateAuthorityData.c_str());
+            auto config = NewForConfig(filepath);
+            url_ = config.Server;
+            curl_slist* headers = nullptr;
+            headers = curl_slist_append(headers, "Content-Type: application/json");
+            curl_easy_setopt(curl_, CURLOPT_HTTPHEADER, headers);
+        curl_easy_setopt(curl_, CURLOPT_HTTPHEADER, headers);
+            // set client cert and key
+            curl_easy_setopt(curl_, CURLOPT_SSLCERT, tlsFile("ca.pem",config.ClientCertificateData).c_str());
+            curl_easy_setopt(curl_, CURLOPT_SSLKEY, tlsFile("key.pem",config.ClientKeyData).c_str());
+            // set CertificateAuthorityData
+            curl_easy_setopt(curl_, CURLOPT_CAINFO, tlsFile("pem.pem",config.CertificateAuthorityData).c_str());
             }
+            
     }
 
     auto KubernetesClient::Init() -> void {
@@ -87,7 +93,7 @@ namespace kubesys {
         std::string response;
         std::cout << " GetResource url=" << url << std::endl;
         DoHttpRequest(curl_,"GET",url,"",response);
-        return nlohmann::json::parse(response)["metadata"]["name"];
+        return response;
     }
 
     auto KubernetesClient::CreateResource(const std::string &jsonStr) -> std::string {
@@ -160,6 +166,7 @@ namespace kubesys {
         url += namespacePath(analyzer_->ruleBase_->FullKindToNamespaceMapper[fullKind], nameSpace);
         url += analyzer_->ruleBase_->FullKindToNameMapper[fullKind] + "/" + name;
         url += "/?watch=true&timeoutSeconds=315360000";
+        // https://192.168.203.130:6443/api/v1/watch/namespaces/default/pods/busybox/?watch=true&timeoutSeconds=3
         watcher->Watching(url);
     }
 

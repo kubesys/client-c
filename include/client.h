@@ -16,8 +16,9 @@ namespace kubesys {
         KubernetesClient(const std::string &url, const std::string &token);
          //default "/var/run/secrets/kubernetes.io/serviceaccount/token"、"/etc/kubernetes/admin.conf"
          // when filepath is null, select default filepath
-        KubernetesClient(std::string& filepath,FileType ft);    
+        KubernetesClient(std::string filepath,FileType ft);    
         KubernetesClient(const std::string& url, const std::string& token, std::shared_ptr<KubernetesAnalyzer> analyzer);
+        KubernetesClient(const std::string& url,CURL *curl,std::shared_ptr<KubernetesAnalyzer> analyzer):url_(url),curl_(curl),analyzer_(analyzer) {} // only for watcher
         ~KubernetesClient() {
             curl_easy_cleanup(curl_);
         };
@@ -40,7 +41,7 @@ namespace kubesys {
         std::string url_;
         std::string token_;
         std::shared_ptr<KubernetesAnalyzer> analyzer_;
-        CURL *curl_ = curl_easy_init();
+        CURL *curl_;
     private:
         // extractor
         auto BaseUrl(const std::string &fullKind, const std::string &nameSpace) -> std::string;

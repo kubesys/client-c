@@ -43,7 +43,6 @@ namespace kubesys{
     
 
     auto Registry::Learning(CURL *curl, std::string &url) -> void {
-        std::cout << "Learning url1:" << url  << std::endl;
         std::string response;
         DoHttpRequest(curl, "GET", url, "",response);
         nlohmann::json jsonData = nlohmann::json::parse(response);

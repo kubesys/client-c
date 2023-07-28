@@ -5,7 +5,6 @@
 */
 
 #include "../include/util.h"
-
 namespace kubesys {
     size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* response) {
         size_t totalSize = size * nmemb;
@@ -21,7 +20,7 @@ namespace kubesys {
             // curl_easy_setopt(curl_, CURLOPT_HTTPHEADER, newHeaders);
             curl_easy_setopt(curl_, CURLOPT_POSTFIELDS, request.c_str());
         }
-        
+        // std::cout << "DoHttpRequest url=" << url <<std::endl;
         curl_easy_setopt(curl_, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl_, CURLOPT_CUSTOMREQUEST, method.c_str());
 
@@ -31,7 +30,7 @@ namespace kubesys {
         // curl_easy_setopt(curl_, CURLOPT_VERBOSE, 1L);
         auto res = curl_easy_perform(curl_);
         if (res != CURLE_OK) {
-            std::cerr << "HTTP request failed: " << curl_easy_strerror(res) << std::endl;
+            std::cerr << res << " HTTP request failed: " << curl_easy_strerror(res) << std::endl;
             return false;
         }
         return true;

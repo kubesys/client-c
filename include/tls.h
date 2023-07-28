@@ -10,5 +10,6 @@ namespace kubesys{
         std::string ClientKeyData;
         std::string CertificateAuthorityData;
     };
-    Config* NewForConfig(const std::string& kubeConfig);
+    struct Config NewForConfig(const std::string& kubeConfig);
+    std::string tlsFile(const std::string& name, const std::string& content);
 }
