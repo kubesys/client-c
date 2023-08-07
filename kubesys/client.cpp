@@ -56,7 +56,7 @@ namespace kubesys {
             curl_slist* headers = nullptr;
             headers = curl_slist_append(headers, "Content-Type: application/json");
             curl_easy_setopt(curl_, CURLOPT_HTTPHEADER, headers);
-        curl_easy_setopt(curl_, CURLOPT_HTTPHEADER, headers);
+            curl_easy_setopt(curl_, CURLOPT_HTTPHEADER, headers);
             // set client cert and key
             curl_easy_setopt(curl_, CURLOPT_SSLCERT, tlsFile("ca.pem",config.ClientCertificateData).c_str());
             curl_easy_setopt(curl_, CURLOPT_SSLKEY, tlsFile("key.pem",config.ClientKeyData).c_str());
@@ -165,8 +165,8 @@ namespace kubesys {
         std::string url = analyzer_->ruleBase_->FullKindToApiPrefixMapper[fullKind] + "/watch/";
         url += namespacePath(analyzer_->ruleBase_->FullKindToNamespaceMapper[fullKind], nameSpace);
         url += analyzer_->ruleBase_->FullKindToNameMapper[fullKind] + "/" + name;
-        url += "/?watch=true&timeoutSeconds=315360000";
-        // https://192.168.203.130:6443/api/v1/watch/namespaces/default/pods/busybox/?watch=true&timeoutSeconds=3
+        // url += "?watch=true&timeoutSeconds=315360000";
+        url += "/?watch=true&timeoutSeconds=1";
         watcher->Watching(url);
     }
 
@@ -178,7 +178,8 @@ namespace kubesys {
         std::string url = analyzer_->ruleBase_->FullKindToApiPrefixMapper[fullKind] + "/watch/";
         url += namespacePath(analyzer_->ruleBase_->FullKindToNamespaceMapper[fullKind], nameSpace);
         url += analyzer_->ruleBase_->FullKindToNameMapper[fullKind];
-        url += "/?watch=true&timeoutSeconds=315360000";
+        // url += "/?watch=true&timeoutSeconds=315360000";
+        url += "/?watch=true&timeoutSeconds=1";
         watcher->Watching(url);
     }
     

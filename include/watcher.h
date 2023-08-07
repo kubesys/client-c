@@ -2,13 +2,14 @@
 #include <iostream>
 #include <map>
 #include <memory>
+#include <string>
 #include "client.h"
 namespace kubesys {
 class WatchHandler {
 public:
-    virtual void DoAdded(std::map<std::string, std::string> obj) = 0;
-    virtual void DoModified(std::map<std::string, std::string> obj) = 0;
-    virtual void DoDeleted(std::map<std::string, std::string> obj) = 0;
+    virtual void DoAdded(nlohmann::json jsonData) = 0;
+    virtual void DoModified(nlohmann::json jsonData) = 0;
+    virtual void DoDeleted(nlohmann::json jsonData) = 0;
     virtual ~WatchHandler() {}
 };
 class KubernetesWatcher {
@@ -19,18 +20,15 @@ private:
 public:
     KubernetesWatcher(std::shared_ptr<KubernetesClient> client, std::unique_ptr<WatchHandler> handler) : client_(client), handler_(std::move(handler)) {};
     void Watching(std::string url) {
-        // auto wclinet = KubernetesClient(url, client_->token_, client_->analyzer_);
-        // auto wclinet = KubernetesClient(url, client_->curl_, client_->analyzer_);
-        // wclinet.curl_ = client_->curl_;
+        auto newcurl = curl_easy_duphandle(client_->curl_);
+        auto wclinet = KubernetesClient(url, client_->analyzer_, newcurl);
         std::string response;
         std::cout<< "watch url:" << url <<std::endl;
         DoHttpRequest(client_->curl_, "GET", url, "", response);
-        std::cout<< "watch response:" << response <<std::endl;
         std::istringstream iss(response);
         std::string line;
         while (std::getline(iss, line)) {
-            std::cout << line << std::endl; 
-            nlohmann::json jsonData = nlohmann::json::parse(response);
+            nlohmann::json jsonData = nlohmann::json::parse(line);
             if(jsonData["type"] == "ADDED") {
                 handler_->DoAdded(jsonData["object"]);
             }else if(jsonData["type"] == "MODIFIED"){
@@ -45,19 +43,16 @@ public:
 // 示例实现 WatchHandler 的具体类
 class PrintWatchHandler  : public WatchHandler {
 public:
-    void DoAdded(std::map<std::string, std::string> obj) override {
-        nlohmann::json jsonObject(obj);
-        std::cout << "ADDED: " << jsonObject.dump() << std::endl;
+    void DoAdded(nlohmann::json jsonData) override {
+        std::cout << "ADDED:" <<  jsonData.dump() << std::endl;
     }
 
-    void DoModified(std::map<std::string, std::string> obj) override {
-        nlohmann::json jsonObject(obj);
-        std::cout << "MODIFIED: " << jsonObject.dump() << std::endl;
+    void DoModified(nlohmann::json jsonData) override {
+        std::cout << "MODIFIED:" <<  jsonData.dump() << std::endl;
     }
 
-    void DoDeleted(std::map<std::string, std::string> obj) override {
-        nlohmann::json jsonObject(obj);
-        std::cout << "DELETED: " << jsonObject.dump() << std::endl;
+    void DoDeleted(nlohmann::json jsonData) override {
+        std::cout << "DELETED:" <<  jsonData.dump() << std::endl;
     }
 };
 }

@@ -155,39 +155,54 @@ void test_kubesys_updateResource() {
     response = client.UpdateResource(updatedJson);
     std::cout <<"UpdateResource response:" << response << std::endl;
 }
-void test_kubesys_b64() {
+void test_kubesys_b64config() {
     std::string encode = "SGVsbG8sIHRoaXMgaXMgYSBzZWNyZXQgbWVzc2FnZSE=";
     auto encodedText = cppcodec::base64_rfc4648::decode(encode);
     std::string decodedString(encodedText.begin(), encodedText.end());
     std::cout << "decode Text: " <<  decodedString << std::endl;
 
     std::string response;
-    KubernetesClient client("",CONFIGFILE);
-    client.Init();
-    response = client.ListResources("Deployment","");
+    auto client = std::make_shared<KubernetesClient>("",CONFIGFILE);
+    
+    client->Init();
+    response = client->ListResources("Deployment","");
     // std::cout << "ListResources: " <<response <<std::endl;
 
 
-    response = client.CreateResource(createPod());
+    response = client->CreateResource(createPod());
     std::cout << "create pod: " <<response <<std::endl;
 
-    response = client.GetResource("Pod", "default", "busybox3");
+    response = client->GetResource("Pod", "default", "busybox3");
     std::cout << "get pod: " <<nlohmann::json::parse(response)["metadata"]["name"] <<std::endl;
 
     // test_kubesys_updateResource();
 
-    response = client.DeleteResource("Pod", "default", "busybox2");
+    response = client->DeleteResource("Pod", "default", "busybox2");
     std::cout << "delete pod: " << response <<std::endl;
 
-    auto url1 = "https://192.168.203.130:6443/api/v1/namespaces/default/pods/busybox1";
-    auto url2 = "https://192.168.203.130:6443/api/v1/watch/namespaces/default/pods/busybox3/?watch=true&timeoutSeconds=20";
-    auto url3 = "https://192.168.203.130:6443/api/v1/watch/namespaces/default/pods/busybox3/?watch=true&timeoutSeconds=1";
-    DoHttpRequest(client.curl_,"GET",url3,"",response);
-    std::cout << "watch pod: " << response <<std::endl;
-    // std::shared_ptr<KubernetesClient> c(&client);
-    // std::unique_ptr<WatchHandler> w(new PrintWatchHandler());
-    // client.WatchResource("Pod", "default", "busybox",std::make_shared<KubernetesWatcher>(c,std::move(w)));
+    // auto url1 = "https://192.168.203.130:6443/api/v1/namespaces/default/pods/busybox1";
+    // auto url2 = "https://192.168.203.130:6443/api/v1/watch/namespaces/default/pods/busybox3/?watch=true&timeoutSeconds=20";
+    // auto url3 = "https://192.168.203.130:6443/api/v1/watch/namespaces/default/pods/busybox3?watch=true&timeoutSeconds=10";
+    // DoHttpRequest(client->curl_,"GET",url3,"",response);
+    // std::cout << "watch pod--: " << response <<std::endl;
+
+    std::unique_ptr<WatchHandler> w(new PrintWatchHandler());
+    // client->WatchResource("Pod", "default", "busybox",std::make_shared<KubernetesWatcher>(client,std::move(w)));
+    client->WatchResources("Pod", "default",std::make_shared<KubernetesWatcher>(client,std::move(w)));
+
+    std::cout << "GetKinds:" << std::endl;
+    for(auto &it  :client->GetKinds()) {
+        std::cout << it << " ";
     }
+    std::cout<<std::endl;
+    std::cout << "GetFullKinds:" << std::endl;
+    for(auto &it  :client->GetFullKinds()) {
+        std::cout << it << " ";
+    }
+    std::cout<<std::endl;
+    std::cout << "GetKindDesc:" <<client->GetKindDesc() << std::endl;
+
+}
 }
 int main() {
     // g++  test.cpp -o test -lcurl
@@ -197,7 +212,7 @@ int main() {
     // test_common();
     // test_readfile();
     // test_kubesys_token();
-    test_kubesys_b64();
+    test_kubesys_b64config();
     return 0;
 }
 

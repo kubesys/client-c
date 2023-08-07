@@ -18,7 +18,8 @@ namespace kubesys {
          // when filepath is null, select default filepath
         KubernetesClient(std::string filepath,FileType ft);    
         KubernetesClient(const std::string& url, const std::string& token, std::shared_ptr<KubernetesAnalyzer> analyzer);
-        KubernetesClient(const std::string& url,CURL *curl,std::shared_ptr<KubernetesAnalyzer> analyzer):url_(url),curl_(curl),analyzer_(analyzer) {} // only for watcher
+        // only for watcher
+        KubernetesClient(const std::string& url,std::shared_ptr<KubernetesAnalyzer> analyzer, CURL *curl):url_(url),analyzer_(analyzer),curl_(curl) {}
         ~KubernetesClient() {
             curl_easy_cleanup(curl_);
         };
