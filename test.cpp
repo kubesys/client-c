@@ -105,7 +105,30 @@ void test_common(){
 }
 
 std::string createPod() {
-	return "{\n  \"apiVersion\": \"v1\",\n  \"kind\": \"Pod\",\n  \"metadata\": {\n    \"name\": \"busybox3\",\n    \"namespace\": \"default\"\n  },\n  \"spec\": {\n    \"containers\": [\n      {\n        \"image\": \"busybox\",\n        \"env\": [{\n           \"name\": \"abc\",\n           \"value\": \"abc\"\n        }],\n        \"command\": [\n          \"sleep\",\n          \"3600\"\n        ],\n        \"imagePullPolicy\": \"IfNotPresent\",\n        \"name\": \"busybox\"\n      }\n    ],\n    \"restartPolicy\": \"Always\"\n  }\n}";
+	return R"(
+        {
+            "apiVersion": "v1",
+            "kind": "Pod",
+            "metadata": {
+                "name": "busybox4",
+                "namespace": "default"
+            },
+            "spec": {
+                "containers": [{
+                    "command": ["sleep", "3600"],
+                    "env": [{
+                        "name": "abc",
+                        "value": "abc"
+                    }],
+                    "image": "busybox",
+                    "imagePullPolicy": "IfNotPresent",
+                    "name": "busybox"
+                }],
+                "restartPolicy": "Always"
+            }
+        }
+        )";
+    // return "{\n  \"apiVersion\": \"v1\",\n  \"kind\": \"Pod\",\n  \"metadata\": {\n    \"name\": \"busybox4\",\n    \"namespace\": \"default\"\n  },\n  \"spec\": {\n    \"containers\": [\n      {\n        \"image\": \"busybox\",\n        \"env\": [{\n           \"name\": \"abc\",\n           \"value\": \"abc\"\n        }],\n        \"command\": [\n          \"sleep\",\n          \"3600\"\n        ],\n        \"imagePullPolicy\": \"IfNotPresent\",\n        \"name\": \"busybox\"\n      }\n    ],\n    \"restartPolicy\": \"Always\"\n  }\n}";
 }
 
 void test_kubesys_token(){
@@ -153,8 +176,19 @@ void test_kubesys_updateResource() {
 
     std::cout << updatedJson << std::endl;
     response = client.UpdateResource(updatedJson);
-    std::cout <<"UpdateResource response:" << response << std::endl;
+    std::cout <<"UpdateResource response:" << response << std::endl; 
 }
+/**
+ *      list   : GET    /apis/apps/v1/deployments
+ *      create : POST   /api/v1/namespaces/default/pods
+ *      Get    : GET    /api/v1/namespaces/default/pods/busybox3
+ *      Update : PUT    /api/v1/namespaces/default/pods/busybox3
+ *      Delete : DELETE /api/v1/namespaces/default/pods/busybox2
+ *      watch  : GET    /api/v1/watch/namespaces/default/pods/busybox/?watch=true&timeoutSeconds=1
+ *      watchs : GET    /api/v1/watch/namespaces/default/pods/?watch=true&timeoutSeconds=1
+ *      bind   : POST   /api/v1/namespaces/default/pods/busybox4/binding
+*/
+
 void test_kubesys_b64config() {
     std::string encode = "SGVsbG8sIHRoaXMgaXMgYSBzZWNyZXQgbWVzc2FnZSE=";
     auto encodedText = cppcodec::base64_rfc4648::decode(encode);
@@ -163,32 +197,24 @@ void test_kubesys_b64config() {
 
     std::string response;
     auto client = std::make_shared<KubernetesClient>("",CONFIGFILE);
-    
     client->Init();
     response = client->ListResources("Deployment","");
-    // std::cout << "ListResources: " <<response <<std::endl;
-
+    // std::cout << "ListResources: " <<response <<std::endl;  // 
 
     response = client->CreateResource(createPod());
-    std::cout << "create pod: " <<response <<std::endl;
+    std::cout << "create pod: " <<response <<std::endl; // 
 
     response = client->GetResource("Pod", "default", "busybox3");
-    std::cout << "get pod: " <<nlohmann::json::parse(response)["metadata"]["name"] <<std::endl;
+    std::cout << "get pod: " <<nlohmann::json::parse(response)["metadata"]["name"] <<std::endl; 
 
-    // test_kubesys_updateResource();
+    test_kubesys_updateResource();  
 
     response = client->DeleteResource("Pod", "default", "busybox2");
     std::cout << "delete pod: " << response <<std::endl;
 
-    // auto url1 = "https://192.168.203.130:6443/api/v1/namespaces/default/pods/busybox1";
-    // auto url2 = "https://192.168.203.130:6443/api/v1/watch/namespaces/default/pods/busybox3/?watch=true&timeoutSeconds=20";
-    // auto url3 = "https://192.168.203.130:6443/api/v1/watch/namespaces/default/pods/busybox3?watch=true&timeoutSeconds=10";
-    // DoHttpRequest(client->curl_,"GET",url3,"",response);
-    // std::cout << "watch pod--: " << response <<std::endl;
-
     std::unique_ptr<WatchHandler> w(new PrintWatchHandler());
-    // client->WatchResource("Pod", "default", "busybox",std::make_shared<KubernetesWatcher>(client,std::move(w)));
-    client->WatchResources("Pod", "default",std::make_shared<KubernetesWatcher>(client,std::move(w)));
+    client->WatchResource("Pod", "default", "busybox",std::make_shared<KubernetesWatcher>(client,std::move(w)));
+    // client->WatchResources("Pod", "default",std::make_shared<KubernetesWatcher>(client,std::move(w)));
 
     std::cout << "GetKinds:" << std::endl;
     for(auto &it  :client->GetKinds()) {
@@ -203,6 +229,53 @@ void test_kubesys_b64config() {
     std::cout << "GetKindDesc:" <<client->GetKindDesc() << std::endl;
 
 }
+
+ /*{
+    "apiVersion":"v1",
+    "kind":"Binding",
+    "metadata":{
+        "name":"busybox4",
+        "namespace":"default"
+    },
+    "target":{
+        "apiVersion":"v1",
+        "kind":"Node",
+        "name":"myhost"
+    }
+}*/
+
+void test_kubesys_bind() {
+    std::string pjson = R"(
+        {
+            "apiVersion": "v1",
+            "kind": "Pod",
+            "metadata": {
+                "name": "busybox4",
+                "namespace": "default"
+            },
+            "spec": {
+                "containers": [{
+                    "command": ["sleep", "3600"],
+                    "env": [{
+                        "name": "abc",
+                        "value": "abc"
+                    }],
+                    "image": "busybox",
+                    "imagePullPolicy": "IfNotPresent",
+                    "name": "busybox"
+                }],
+                "restartPolicy": "Always"
+            }
+        }
+    )";
+    auto jsonStr = json::parse(pjson);
+    std::string host = "myhost";
+    std::string response;
+    auto client = std::make_shared<KubernetesClient>("",CONFIGFILE);
+    client->Init();
+    response = client->BindResources(jsonStr,host);
+    std::cout << "bindResponse:"<< response <<std::endl;
+}
 }
 int main() {
     // g++  test.cpp -o test -lcurl
@@ -212,7 +285,8 @@ int main() {
     // test_common();
     // test_readfile();
     // test_kubesys_token();
-    test_kubesys_b64config();
+    // test_kubesys_b64config();
+    test_kubesys_bind();
     return 0;
 }
 

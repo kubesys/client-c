@@ -79,7 +79,7 @@ namespace kubesys {
         }
         std::string url = ListResourcesUrl(fullKind, nameSpace);
         std::string response;
-        std::cout << " ListResources url=" << url << std::endl;
+        
         DoHttpRequest(curl_,"GET",url,"",response);
         return response;
     }
@@ -91,7 +91,6 @@ namespace kubesys {
         }
         std::string url = GetResourceUrl(fullKind, nameSpace,name);
         std::string response;
-        std::cout << " GetResource url=" << url << std::endl;
         DoHttpRequest(curl_,"GET",url,"",response);
         return response;
     }
@@ -100,7 +99,6 @@ namespace kubesys {
         auto parsedJson = nlohmann::json::parse(jsonStr);
         std::string url = CreateResourceUrl(fullKind(parsedJson), getNamespace(parsedJson));
         std::string response;
-        std::cout << " CreateResource url=" << url << std::endl;
         DoHttpRequest(curl_,"POST",url,jsonStr,response);
         return response;
     }
@@ -109,7 +107,6 @@ namespace kubesys {
         auto parsedJson = nlohmann::json::parse(jsonStr);
         std::string url = UpdateResourceUrl(fullKind(parsedJson), getNamespace(parsedJson),getName(parsedJson));
         std::string response;
-        std::cout << " UpdateResource url=" << url << std::endl;
         DoHttpRequest(curl_,"PUT",url,jsonStr,response);
         return response;
     }
@@ -121,7 +118,6 @@ namespace kubesys {
         }
         std::string url = DeleteResourceUrl(fullKind, nameSpace,name);
         std::string response;
-        std::cout << " DeleteResource url=" << url << std::endl;
         DoHttpRequest(curl_,"DELETE",url,"",response);
         return response;
     }
@@ -153,6 +149,7 @@ namespace kubesys {
         std::string url = BindingResourceStatusUrl(fullKind(pod), getNamespace(pod), getName(pod));
         std::string response;
         std::cout << " BindResources url=" << url << std::endl;
+        std::cout << podJson.dump() <<std::endl;
         DoHttpRequest(curl_,"POST",url,podJson.dump(),response);
         return response;
     }

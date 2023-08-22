@@ -19,18 +19,12 @@ namespace kubesys{
 
     auto getFullKind(const std::string& shortKind, const std::string& apiVersion) -> std::string {
         size_t index = apiVersion.find('/');
-        std::string apiGroup = "";
         if (index != std::string::npos) {
-            apiGroup = apiVersion.substr(0, index);
-        }
-
-        std::string fullKind = "";
-        if (apiGroup.empty()) {
-            fullKind = shortKind;
+            auto apiGroup = apiVersion.substr(0, index);
+            return apiGroup + "." + shortKind;
         } else {
-            fullKind = apiGroup + "." + shortKind;
+            return shortKind;
         }
-        return fullKind;
     }
 
     auto getGroup(const std::string& apiVersion) -> std::string {
@@ -63,6 +57,7 @@ namespace kubesys{
             std::string shortKind = jValue["kind"].get<std::string>();
             std::string fullKind = getFullKind(shortKind, apiVersion);
             if(ruleBase_->FullKindToApiPrefixMapper.count(fullKind) == 0) {
+                std::cout << url <<" " << shortKind << " " << apiVersion << " " << fullKind << std::endl;
                 ruleBase_->KindToFullKindMapper[shortKind].push_back(fullKind);
                 ruleBase_->FullKindToApiPrefixMapper[fullKind] = url; 
                 ruleBase_->FullKindToNameMapper[fullKind] = jValue["name"].get<std::string>();

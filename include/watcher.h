@@ -40,11 +40,15 @@ public:
     }
 };
 
-// 示例实现 WatchHandler 的具体类
 class PrintWatchHandler  : public WatchHandler {
 public:
     void DoAdded(nlohmann::json jsonData) override {
         std::cout << "ADDED:" <<  jsonData.dump() << std::endl;
+        auto phase = jsonData["status"]["phase"].get<std::string>();
+        auto name = jsonData["metadata"]["name"].get<std::string>();
+        if(phase == "Pending"){
+            
+        }
     }
 
     void DoModified(nlohmann::json jsonData) override {
