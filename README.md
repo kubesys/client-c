@@ -9,12 +9,13 @@ We expect to provide a C++ client:
 - **Integration**. It can work with the other Kubernetes clients, such
   as  [official](https://github.com/kubernetes-client/go).
 
-This project is based on the following softwares.
+This project is based on the following softwares. 
 
 | NAME  |   Website                       | LICENSE         | 
 |-------|---------------------------------|-----------------|
 | curl |  https://github.com/curl/curl | MIT  |
 | nlohmann |  https://github.com/nlohmann/json | MIT  |
+| base64 |  https://github.com/tplgy/cppcodec | MIT  |
 
 
 ## Comparison
@@ -85,4 +86,34 @@ client->Init();
 ```
 
 ### simple-example
+List resources:
+
+```c++
+response = client->ListResources("Deployment","");
+```
+
+Create a resource:
+
+```c++
+response = client->CreateResource(createPod());
+```
+
+Get a resource:
+
+```c++
+response = client->GetResource("Pod", "default", "busybox3");
+```
+
+Delete a resource:
+
+```c++
+response = client->DeleteResource("Pod", "default", "busybox2");
+```
+
+Watch a resource::
+```c++
+std::unique_ptr<WatchHandler> w(new PrintWatchHandler());
+client->WatchResource("Pod", "default", "busybox",std::make_shared<KubernetesWatcher>(client,std::move(w)));
+```
+
 
