@@ -1,0 +1,5 @@
+.vscode
+*.o
+kubesys/*.o
+*.pem
+test
