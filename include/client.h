@@ -11,6 +11,7 @@ namespace kubesys {
         CONFIGFILE,
     } FileType;
     class KubernetesWatcher;
+    class KubernetesWatchLister;
     class KubernetesClient {
     public:
         KubernetesClient(const std::string &url, const std::string &token);
@@ -33,6 +34,7 @@ namespace kubesys {
         auto BindResources(nlohmann::json &pod , std::string &host) -> std::string;
         auto WatchResource(const std::string &kind , const std::string &nameSpace, const std::string &name , std::shared_ptr<KubernetesWatcher> watcher) -> void;
         auto WatchResources(const std::string &kind , const std::string &nameSpace , std::shared_ptr<KubernetesWatcher> watcher) -> void;
+        auto WatchListResources(const std::string &kind , const std::string &nameSpace , std::shared_ptr<KubernetesWatchLister> watcher) -> void;
         auto ListResourcesWithLabelSelector(const std::string &kind , const std::string &nameSpace, std::map<std::string,std::string> labels) ->std::string;
         auto ListResourcesWithFieldSelector(const std::string &kind , const std::string &nameSpace, std::map<std::string,std::string> fields) -> std::string;
         //metedata

@@ -57,7 +57,7 @@ namespace kubesys{
             std::string shortKind = jValue["kind"].get<std::string>();
             std::string fullKind = getFullKind(shortKind, apiVersion);
             if(ruleBase_->FullKindToApiPrefixMapper.count(fullKind) == 0) {
-                std::cout << url <<" " << shortKind << " " << apiVersion << " " << fullKind << std::endl;
+                // std::cout << url <<" " << shortKind << " " << apiVersion << " " << fullKind << std::endl;
                 ruleBase_->KindToFullKindMapper[shortKind].push_back(fullKind);
                 ruleBase_->FullKindToApiPrefixMapper[fullKind] = url; 
                 ruleBase_->FullKindToNameMapper[fullKind] = jValue["name"].get<std::string>();

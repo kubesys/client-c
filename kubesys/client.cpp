@@ -7,6 +7,7 @@
 #include "../include/client.h"
 #include "../include/tls.h"
 #include "../include/watcher.h"
+#include "../include/watchlist.h"
 
 namespace kubesys {  
     KubernetesClient::KubernetesClient(const std::string& url, const std::string& token)
@@ -180,6 +181,19 @@ namespace kubesys {
         watcher->Watching(url);
     }
     
+    auto KubernetesClient::WatchListResources(const std::string &kind , const std::string &nameSpace , std::shared_ptr<KubernetesWatchLister> watcher) -> void{
+        std::string fullKind = toFullKind(kind,analyzer_->ruleBase_->KindToFullKindMapper);
+        if (fullKind.empty()) {
+            return ;
+        }
+        std::string url = analyzer_->ruleBase_->FullKindToApiPrefixMapper[fullKind] + "/watch/";
+        url += namespacePath(analyzer_->ruleBase_->FullKindToNamespaceMapper[fullKind], nameSpace);
+        url += analyzer_->ruleBase_->FullKindToNameMapper[fullKind];
+        // url += "/?watch=true&timeoutSeconds=315360000";
+        url += "/?watch=true&timeoutSeconds=1";
+        watcher->WatchList(url);
+    }
+
     auto KubernetesClient::ListResourcesWithLabelSelector(const std::string &kind , const std::string &nameSpace, std::map<std::string,std::string> labels) ->std::string {
         auto fullKind = toFullKind(kind, analyzer_->ruleBase_->KindToFullKindMapper);
         if(fullKind.empty()) {

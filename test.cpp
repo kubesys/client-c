@@ -198,8 +198,9 @@ void test_kubesys_b64config() {
     std::string response;
     auto client = std::make_shared<KubernetesClient>("",CONFIGFILE);
     client->Init();
-    response = client->ListResources("Deployment","");
-    // std::cout << "ListResources: " <<response <<std::endl;  // 
+    // Deployment
+    response = client->ListResources("Node","");
+    std::cout << "ListResources: " <<response <<std::endl;  
 
     response = client->CreateResource(createPod());
     std::cout << "create pod: " <<response <<std::endl; // 
@@ -285,8 +286,8 @@ int main() {
     // test_common();
     // test_readfile();
     // test_kubesys_token();
-    // test_kubesys_b64config();
-    test_kubesys_bind();
+    test_kubesys_b64config();
+    // test_kubesys_bind();
     return 0;
 }
 
