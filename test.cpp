@@ -5,10 +5,13 @@
 #include "./include/client.h"
 #include "./include/util.h"
 #include "./include/watcher.h"
+#include "./include/watchlist.h"
+#include "./include/schedule/schedule.h"
 #include "./deps/cppcodec-master/cppcodec/base64_rfc4648.hpp"
+#include "./kubesys/schedule/schedule.cpp"
 using json = nlohmann::json;
 namespace kubesys {
-// g++ -I../deps/include/ -march=haswell --std=c++11 test.cpp -o test_curl -lcurl
+// g++ -I../deps/include/ -march=haswell --std=c++17 test.cpp -o test_curl -lcurl
 size_t WriteCallback2(void* contents, size_t size, size_t nmemb, std::string* response) {
     size_t totalSize = size * nmemb;
     response->append(static_cast<char*>(contents), totalSize);
@@ -56,12 +59,29 @@ void test_json(){
   // JSON字符串
     std::string jsonString = R"(
         {
-            "name": "John",
-            "age": 30,
-            "is_student": true,
-            "hobbies": ["reading", "swimming", "gaming"]
-        }
-    )";
+	"name": "John",
+	"age": 30,
+	"is_student": true,
+	"hobbies": ["reading", "swimming", "gaming"],
+	"items": [{
+		"meta": {
+			"name": "ubuntu",
+			"age": "18"
+		},
+		"status": {
+			"t1": "t1",
+			"t2": "t2"
+		}}, 
+        {
+		"meta": {
+			"name": "ubuntu2",
+			"age": "28"
+		},
+		"status": {
+			"t1": "22",
+			"t2": "222"
+		}}]
+    })";
     try {
         // 解析JSON数据
         json jsonData = json::parse(jsonString);
@@ -91,6 +111,14 @@ void test_json(){
         // 将解析后的JSON数据再转换为字符串
         std::string parsedJsonString = jsonData.dump();
         std::cout << "Parsed JSON: " << parsedJsonString << std::endl;
+
+        json newdata;
+        for (const auto& item : jsonData["items"]) {
+            std::string name = item["meta"]["name"];
+            nlohmann::json status = item["status"];
+            newdata[name]["status"] = status;
+        }
+        std::cout << "Parsed nodesJSON: " << newdata.dump() << std::endl;
     } catch (const std::exception& e) {
         // 解析失败
         std::cerr << "JSON parse error: " << e.what() << std::endl;
@@ -277,6 +305,16 @@ void test_kubesys_bind() {
     response = client->BindResources(jsonStr,host);
     std::cout << "bindResponse:"<< response <<std::endl;
 }
+
+void test_schedule() {
+    store s;
+    auto client = std::make_shared<KubernetesClient>("",CONFIGFILE);
+    std::unique_ptr<WatchListHandler> wlhandler(new WatchListHandlerImpl(&s));
+    auto informer = std::make_shared<Informer>(client,std::move(wlhandler),&s);
+    frameworker *f = new fwImpl();
+    Schedule schedule(f,informer);
+    schedule.Run();
+}
 }
 int main() {
     // g++  test.cpp -o test -lcurl
@@ -286,7 +324,7 @@ int main() {
     // test_common();
     // test_readfile();
     // test_kubesys_token();
-    test_kubesys_b64config();
+    // test_kubesys_b64config();
     // test_kubesys_bind();
     return 0;
 }

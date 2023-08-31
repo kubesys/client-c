@@ -1,6 +1,6 @@
 CC := g++
 CFLAGS := -Wall -std=c++17
-LDFLAGS := -lcurl
+LDFLAGS := -lcurl -pthread
 SRC_DIR := .
 INCLUDE_DIR := include
 KUBESYS_DIR := kubesys
